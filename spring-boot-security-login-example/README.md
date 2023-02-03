@@ -1,8 +1,8 @@
-# Spring Boot Security Login Example
+# Spring Boot 3 Rest API example
 
 ## Introduction
 
-JSON Web Token REST api server
+Spring Boot 3 JSON Web Token REST API Login Example
 
 ### Available resources
 
@@ -31,20 +31,30 @@ The back-end is using an [PostgreSQL database](https://www.postgresql.org) behin
 
 + git
 + Java 17
-+ Gradle
++ Spring Boot 3.0.2
++ Gradle 7.6
 
 ### Dependency
 
 + springboot-web
 + springboot-data-jpa
 + springboot-security
++ springboot-validation
 + jjwt
 + postgresql
 
 ### Run Spring Boot application
 
+#### STEP 1. Insert data
+```sql
+INSERT INTO roles (id, name) VALUES (1, 'ROLE_USER');
+INSERT INTO roles (id, name) VALUES (2, 'ROLE_MODERATOR');
+INSERT INTO roles (id, name) VALUES (3, 'ROLE_ADMIN');
 ```
-VM Options
+
+#### STEP 2. Spring Boot run
+```
+ADD VM Options
 
 -Dspring.datasource.username=pgadmin
 -Dspring.datasource.password=P@ssw0rd

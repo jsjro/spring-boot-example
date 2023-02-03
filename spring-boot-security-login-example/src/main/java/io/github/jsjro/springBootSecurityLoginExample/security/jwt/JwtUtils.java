@@ -2,6 +2,9 @@ package io.github.jsjro.springBootSecurityLoginExample.security.jwt;
 
 import io.github.jsjro.springBootSecurityLoginExample.security.services.UserDetailsImpl;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,8 +12,8 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.crypto.SecretKey;
+import java.util.Base64;
 import java.util.Date;
 
 @Component
@@ -68,11 +71,14 @@ public class JwtUtils {
     }
 
     public String generateTokenFromUsername(String username) {
-        return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
-                .compact();
+
+        Claims claim = Jwts.claims().setSubject(username);
+        claim.setIssuedAt(new Date());
+        claim.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs));
+
+        byte[] bytesEncoded = Base64.getEncoder().encode(jwtSecret.getBytes());
+        SecretKey key = Keys.hmacShaKeyFor(bytesEncoded);
+
+        return Jwts.builder().setClaims(claim).signWith(key, SignatureAlgorithm.HS512).compact();
     }
 }

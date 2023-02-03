@@ -1,8 +1,8 @@
 package io.github.jsjro.springBootSecurityLoginExample.security.jwt;
 
-import io.github.jsjro.springBootSecurityLoginExample.security.services.UserDetailsImpl;
+import io.github.jsjro.springBootSecurityLoginExample.model.User;
+import io.github.jsjro.springBootSecurityLoginExample.security.service.UserDetailsImpl;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -12,8 +12,6 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
 
-import javax.crypto.SecretKey;
-import java.util.Base64;
 import java.util.Date;
 
 @Component
@@ -29,22 +27,37 @@ public class JwtUtils {
     @Value("${jsjro.app.jwtCookieName}")
     private String jwtCookie;
 
-    public String getJwtFromCookies(HttpServletRequest request) {
-        Cookie cookie = WebUtils.getCookie(request, jwtCookie);
-        if (cookie != null) {
-            return cookie.getValue();
-        } else {
-            return null;
-        }
-    }
+    @Value("${jsjro.app.jwtRefreshCookieName}")
+    private String jwtRefreshCookie;
 
     public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
         String jwt = generateTokenFromUsername(userPrincipal.getUsername());
-        return ResponseCookie.from(jwtCookie, jwt).path("/api").maxAge(24 * 60 * 60).httpOnly(true).build();
+        return generateCookie(jwtCookie, jwt, "/api");
+    }
+
+    public ResponseCookie generateJwtCookie(User user) {
+        String jwt = generateTokenFromUsername(user.getUsername());
+        return generateCookie(jwtCookie, jwt, "/api");
+    }
+
+    public ResponseCookie generateRefreshJwtCookie(String refreshToken) {
+        return generateCookie(jwtRefreshCookie, refreshToken, "/api/auth/refreshtoken");
+    }
+
+    public String getJwtFromCookies(HttpServletRequest request) {
+        return getCookieValueByName(request, jwtCookie);
+    }
+
+    public String getJwtRefreshFromCookies(HttpServletRequest request) {
+        return getCookieValueByName(request, jwtRefreshCookie);
     }
 
     public ResponseCookie getCleanJwtCookie() {
         return ResponseCookie.from(jwtCookie, null).path("/api").build();
+    }
+
+    public ResponseCookie getCleanJwtRefreshCookie() {
+        return ResponseCookie.from(jwtRefreshCookie, null).path("/api/auth/refreshtoken").build();
     }
 
     public String getUserNameFromJwtToken(String token) {
@@ -53,7 +66,7 @@ public class JwtUtils {
 
     public boolean validateJwtToken(String authToken) {
         try {
-            Jwts.parserBuilder().setSigningKey(jwtSecret).build().parseClaimsJws(authToken);
+            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException e) {
             logger.error("Invalid JWT signature: {}", e.getMessage());
@@ -71,14 +84,24 @@ public class JwtUtils {
     }
 
     public String generateTokenFromUsername(String username) {
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+    }
 
-        Claims claim = Jwts.claims().setSubject(username);
-        claim.setIssuedAt(new Date());
-        claim.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs));
+    private ResponseCookie generateCookie(String name, String value, String path) {
+        return ResponseCookie.from(name, value).path(path).maxAge(24 * 60 * 60).httpOnly(true).build();
+    }
 
-        byte[] bytesEncoded = Base64.getEncoder().encode(jwtSecret.getBytes());
-        SecretKey key = Keys.hmacShaKeyFor(bytesEncoded);
-
-        return Jwts.builder().setClaims(claim).signWith(key, SignatureAlgorithm.HS512).compact();
+    private String getCookieValueByName(HttpServletRequest request, String name) {
+        Cookie cookie = WebUtils.getCookie(request, name);
+        if (cookie != null) {
+            return cookie.getValue();
+        } else {
+            return null;
+        }
     }
 }

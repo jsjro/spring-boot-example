@@ -1,4 +1,4 @@
-package io.github.jsjro.springBootSecurityLoginExample.security.services;
+package io.github.jsjro.springBootSecurityLoginExample.security.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.github.jsjro.springBootSecurityLoginExample.model.User;

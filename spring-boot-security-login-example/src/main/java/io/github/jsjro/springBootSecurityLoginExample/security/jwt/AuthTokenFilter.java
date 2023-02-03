@@ -1,6 +1,6 @@
 package io.github.jsjro.springBootSecurityLoginExample.security.jwt;
 
-import io.github.jsjro.springBootSecurityLoginExample.security.services.UserDetailsServiceImpl;
+import io.github.jsjro.springBootSecurityLoginExample.security.service.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

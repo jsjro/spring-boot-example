@@ -2,8 +2,7 @@ package io.github.jsjro.springBootSecurityLoginExample.security;
 
 import io.github.jsjro.springBootSecurityLoginExample.security.jwt.AuthEntryPointJwt;
 import io.github.jsjro.springBootSecurityLoginExample.security.jwt.AuthTokenFilter;
-import io.github.jsjro.springBootSecurityLoginExample.security.services.UserDetailsServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.github.jsjro.springBootSecurityLoginExample.security.service.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,15 +16,22 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * WebSecurityConfigurerAdapter is deprecated from Spring Boot 2.7.0
+ * More details at: https://spring.io/blog/2022/02/21/spring-security-without-the-websecurityconfigureradapter
+ */
 @Configuration
 @EnableMethodSecurity
 public class WebSecurityConfig {
 
-    @Autowired
-    UserDetailsServiceImpl userDetailsService;
+    private final UserDetailsServiceImpl userDetailsService;
 
-    @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
+    private final AuthEntryPointJwt unauthorizedHandler;
+
+    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, AuthEntryPointJwt unauthorizedHandler) {
+        this.userDetailsService = userDetailsService;
+        this.unauthorizedHandler = unauthorizedHandler;
+    }
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {

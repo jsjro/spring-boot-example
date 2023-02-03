@@ -10,16 +10,19 @@ The following resources are available:
 
 #### Auth
 
-+ ``POST /api/auth/signin`` (``JSON``) : authenticateUser
-+ ``POST /api/auth/signup`` (``JSON``) : registerUser
++ ``POST /api/auth/signup`` (``JSON``) : signup new account
++ ``POST /api/auth/signin`` (``JSON``) : login an account
++ ``POST /api/auth/signout`` (``JSON``) : logout the account
++ ``POST /api/auth/refreshtoken`` (``JSON``) : 	generate new Access Token
 
 #### Test
 
-+ ``GET /api/test/all`` (``JSON``) : allAccess
-+ ``GET /api/test/admin`` (``JSON``) : adminAcess
-+ ``GET /api/test/mod`` (``JSON``) : modAccess
-+ ``GET /api/test/user`` (``JSON``) : userAccess
++ ``GET /api/test/all`` (``JSON``) : retrieve public content
++ ``GET /api/test/admin`` (``JSON``) : access User’s content
++ ``GET /api/test/mod`` (``JSON``) : access Moderator’s content
++ ``GET /api/test/user`` (``JSON``) : access Admin’s content
 
+* The access Token is stored in HttpOnly Cookie
 
 ### Back-end
 
@@ -58,8 +61,9 @@ ADD VM Options
 
 -Dspring.datasource.username=pgadmin
 -Dspring.datasource.password=P@ssw0rd
--Djsjro.app.jwtCookieName=jsjro
--Djsjro.app.jwtSecret=d3c5153d-bfd3-497c-9b04-49d1935868d2-29b535bd-3dff-4b95-838d-2f8f1f9783cf
+-Djsjro.app.jwtCookieName=jsjro-jwt
+-Djsjro.app.jwtRefreshCookieName=jsjro-jwt-refresh
+-Djsjro.app.jwtSecret=2366HKxscwd7LZA5NldnKj7NrGMICPKYxyHKqMFlG8lplhvyB1uMcCB4sQfx6buYO2LrMnD1GO9uXX1nuDdLFsodqM9VqZMk
 
 mvn spring-boot:run
 ```

@@ -40,3 +40,9 @@ The back-end is using an [H2 database](https://www.h2database.com/) behind to st
 ```
 mvn spring-boot:run
 ```
+
+### To connect to Swagger UI
+
+```
+http://localhost:8080/swagger-ui.html
+```

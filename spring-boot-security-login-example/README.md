@@ -26,7 +26,7 @@ The following resources are available:
 
 ### Back-end
 
-The back-end is using an [PostgreSQL database](https://www.postgresql.org) behind to store the user and role.
+The back-end is using an [H2 database](https://www.h2database.com/) behind to store the post.
 
 ## How to build and execute it
 
@@ -44,26 +44,30 @@ The back-end is using an [PostgreSQL database](https://www.postgresql.org) behin
 + springboot-security
 + springboot-validation
 + jjwt
-+ postgresql
++ h2
 
 ### Run Spring Boot application
 
-#### STEP 1. Insert data
-```sql
-INSERT INTO roles (id, name) VALUES (1, 'ROLE_USER');
-INSERT INTO roles (id, name) VALUES (2, 'ROLE_MODERATOR');
-INSERT INTO roles (id, name) VALUES (3, 'ROLE_ADMIN');
-```
-
-#### STEP 2. Spring Boot run
 ```
 ADD VM Options
 
--Dspring.datasource.username=pgadmin
--Dspring.datasource.password=P@ssw0rd
+-Dspring.datasource.username=sa
+-Dspring.datasource.password=
 -Djsjro.app.jwtCookieName=jsjro-jwt
 -Djsjro.app.jwtRefreshCookieName=jsjro-jwt-refresh
 -Djsjro.app.jwtSecret=2366HKxscwd7LZA5NldnKj7NrGMICPKYxyHKqMFlG8lplhvyB1uMcCB4sQfx6buYO2LrMnD1GO9uXX1nuDdLFsodqM9VqZMk
 
 mvn spring-boot:run
+```
+
+### To connect to Swagger UI
+
+```
+http://localhost:8080/swagger-ui/index.html
+```
+
+### To connect to H2 Console
+
+```
+http://localhost:8080/h2-console
 ```

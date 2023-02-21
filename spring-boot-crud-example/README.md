@@ -44,5 +44,5 @@ mvn spring-boot:run
 ### To connect to Swagger UI
 
 ```
-http://localhost:8080/swagger-ui.html
+http://localhost:8080/swagger-ui/index.html
 ```
